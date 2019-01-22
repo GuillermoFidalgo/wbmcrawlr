@@ -40,6 +40,6 @@ setup(
     author="Peter Stein",
     author_email="peter.stein@cern.ch",
     packages=find_packages(),
-    install_requires=["cernrequests", "xmltodict"],
+    install_requires=["cernrequests", "xmltodict", "future"],
     entry_points={"console_scripts": ["wbmcrawl=wbmcrawlr.main:main"]},
 )
