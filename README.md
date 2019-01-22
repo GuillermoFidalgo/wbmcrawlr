@@ -46,7 +46,7 @@ Total number of runs: 6424
 
 All runs will be stored in ```oms_runs.json```
 
-```bash
+```
 Getting runs 313052 - 327564 from CMS OMS
 Total number of runs: 6424
 
