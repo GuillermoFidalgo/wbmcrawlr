@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/ptrstn/wbmcrawlr.svg?branch=master)](https://travis-ci.com/ptrstn/wbmcrawlr)
+
 # CMS WBM Crawler
 
 Retrieve data from the [CMS Online Monitoring System](https://cmsoms.cern.ch/) and [CMS Web Based Monitoring](https://cmswbm.cern.ch/). Currently only the [OMS Run Summary](https://cmsoms.cern.ch/cms/runs/summary) is tool assisted.
