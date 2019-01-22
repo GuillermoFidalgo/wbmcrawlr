@@ -29,7 +29,10 @@ def save_to_disk(path, content):
         print("Creating directory '{}'".format(directory))
         os.makedirs(directory)
     with open(path, "w") as file:
-        file.write(content)
+        try:
+            file.write(content)
+        except TypeError:
+            file.write(content.decode('utf-8'))
 
 
 def flatten_run(run):
@@ -50,6 +53,6 @@ def progress_bar(current, total, text="", filler="#"):
     return "[{}] {:.2%} {}".format(bar, processed, text)
 
 
-def print_progress(current, total, text):
-    print(progress_bar(current, total, text), end="\r")
+def print_progress(current, total, text="", *args, **kwargs):
+    print(progress_bar(current, total, text, *args, **kwargs), end="\r")
     sys.stdout.flush()
