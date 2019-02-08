@@ -63,7 +63,7 @@ def get_fill(fill_number):
 
 def _get_resources(table, parameters, cookies, page=0):
     parameters = urlencode(
-        {"page[offset]": page * PAGE_SIZE, "page[limit]": PAGE_SIZE, **parameters}
+        {"page[offset]": page * PAGE_SIZE, "page[limit]": PAGE_SIZE}.update(parameters)
     )
 
     url = "{base}{table}?{parameters}".format(
