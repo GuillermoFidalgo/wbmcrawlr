@@ -75,7 +75,7 @@ Total number of fills: 4
 
 [##################################################] 100.00% Page 1/1
 
-Stored 4 runs in 'oms_fills.json'
+Stored 4 fills in 'oms_fills.json'
 ```
 
 ## References

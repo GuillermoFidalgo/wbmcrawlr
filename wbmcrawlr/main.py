@@ -56,13 +56,14 @@ def main():
     max = args.max
 
     method = oms.get_runs if args.runs else oms.get_fills
+    resource = "runs" if args.runs else "fills"
     response = method(min, max)
 
     content = json.dumps(response, indent=2)
 
-    filename = "oms_runs.json" if args.runs else "oms_fills.json"
+    filename = "oms_{}.json".format(resource)
     save_to_disk(filename, content=content)
-    print("Stored {} runs in '{}'".format(len(response), filename))
+    print("Stored {} {} in '{}'".format(len(response), resource, filename))
 
 
 if __name__ == "__main__":
