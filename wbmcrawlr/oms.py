@@ -33,22 +33,33 @@ OMS_API_URL = "https://cmsoms.cern.ch/agg/api/v1/"
 PAGE_SIZE = 100
 
 
-def get_run(run_number):
-    parameters = ("filter[run_number][EQ]={run_number}&sort=-run_number").format(
-        run_number=run_number
-    )
-
+def get_resource(table, parameters):
     url = "{base}{table}?{parameters}".format(
-        base=OMS_API_URL, table="runs", parameters=parameters
+        base=OMS_API_URL, table=table, parameters=parameters
     )
 
     cookies = get_sso_cookies(url)
     response = cernrequests.get(url, cookies=cookies)
 
     data = response.json()["data"]
-    assert len(data) == 1, "More than 1 run were returned"
+    assert len(data) == 1, "More than 1 {} were returned".format(table)
 
     return data[0]
+
+
+def get_run(run_number):
+    parameters = "filter[run_number][EQ]={run_number}&sort=-run_number".format(
+        run_number=run_number
+    )
+
+    return get_resource("runs", parameters)
+
+
+def get_fill(fill_number):
+    parameters = "filter[fill_number][EQ]={fill_number}&sort=-fill_number".format(
+        fill_number=fill_number
+    )
+    return get_resource("fills", parameters)
 
 
 def _get_runs(begin, end, cookies, page=0):
@@ -90,24 +101,6 @@ def get_runs(begin, end):
     print()
     print()
     return runs
-
-
-def get_fill(fill_number):
-    parameters = "filter[fill_number][EQ]={fill_number}&sort=-fill_number".format(
-        fill_number=fill_number
-    )
-
-    url = "{base}{table}?{parameters}".format(
-        base=OMS_API_URL, table="fills", parameters=parameters
-    )
-
-    cookies = get_sso_cookies(url)
-    response = cernrequests.get(url, cookies=cookies)
-
-    data = response.json()["data"]
-    assert len(data) == 1, "More than 1 fill were returned"
-
-    return data[0]
 
 
 def _get_fills(begin, end, cookies, page=0):
