@@ -27,7 +27,7 @@ import math
 import cernrequests
 from cernrequests import get_sso_cookies
 
-from wbmcrawlr.utils import flatten_run, print_progress
+from wbmcrawlr.utils import flatten_json_response, print_progress
 
 OMS_API_URL = "https://cmsoms.cern.ch/agg/api/v1/"
 PAGE_SIZE = 100
@@ -80,13 +80,13 @@ def get_runs(begin, end):
 
     runs = []
     for run in response["data"]:
-        runs.append(flatten_run(run))
+        runs.append(flatten_json_response(run))
 
     for page in range(1, page_count + 1):
         print_progress(page, page_count, text="Page {}/{}".format(page, page_count))
         response = _get_runs(begin, end, cookies, page)
         for run in response["data"]:
-            runs.append(flatten_run(run))
+            runs.append(flatten_json_response(run))
     print()
     print()
     return runs
@@ -139,13 +139,13 @@ def get_fills(begin, end):
 
     fills = []
     for fill in response["data"]:
-        fills.append(flatten_run(fill))
+        fills.append(flatten_json_response(fill))
 
     for page in range(1, page_count + 1):
         print_progress(page, page_count, text="Page {}/{}".format(page, page_count))
         response = _get_fills(begin, end, cookies, page)
         for fill in response["data"]:
-            fills.append(flatten_run(fill))
+            fills.append(flatten_json_response(fill))
     print()
     print()
     return fills

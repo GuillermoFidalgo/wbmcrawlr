@@ -35,12 +35,12 @@ def save_to_disk(path, content):
             file.write(content.decode("utf-8"))
 
 
-def flatten_run(run):
-    run_flat = run["attributes"]
-    for key, value in run["meta"]["row"].items():
+def flatten_json_response(response):
+    response_flat = response["attributes"]
+    for key, value in response["meta"]["row"].items():
         new_field_name = "{}_unit".format(key)
-        run_flat.update({new_field_name: value["units"]})
-    return run_flat
+        response_flat.update({new_field_name: value["units"]})
+    return response_flat
 
 
 def progress_bar(current, total, text="", filler="#"):
