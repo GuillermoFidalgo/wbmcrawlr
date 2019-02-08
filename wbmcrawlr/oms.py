@@ -62,12 +62,12 @@ def get_fill(fill_number):
 
 
 def _get_resources(table, parameters, cookies, page=0):
-    parameters = urlencode(
-        {"page[offset]": page * PAGE_SIZE, "page[limit]": PAGE_SIZE}.update(parameters)
-    )
+    params = {"page[offset]": page * PAGE_SIZE, "page[limit]": PAGE_SIZE}
+    params.update(parameters)
+    encoded_parameters = urlencode(params)
 
     url = "{base}{table}?{parameters}".format(
-        base=OMS_API_URL, table=table, parameters=parameters
+        base=OMS_API_URL, table=table, parameters=encoded_parameters
     )
 
     response = cernrequests.get(url, cookies=cookies)
