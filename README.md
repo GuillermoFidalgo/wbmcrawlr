@@ -21,7 +21,7 @@ Setup your CERN Grid User Certificate as instructed in the cernrequests package:
 ### Help
 
 ```bash
-usage: wbmcrawl [-h] min max
+usage: wbmcrawl [-h] (--runs | --fills) min max
 
 CERN CMS WBM and OMS crawler.
 
@@ -31,6 +31,8 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+  --runs      Retrieve Runs
+  --fills     Retrieve Fills
 ```
 
 ### Example
@@ -66,7 +68,7 @@ Stored 6424 runs in 'oms_runs.json'
 Similarly, with the parameter ````--fills```` you get all LHC fills in the specified number range.
 
 ```bash
-wbmcrawl 7480 7483 --fills
+wbmcrawl --fills 7480 7483
 ```
 
 ```
