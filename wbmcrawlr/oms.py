@@ -72,9 +72,9 @@ runs_fields_string = ",".join(runs_fields)
 
 
 def get_run(run_number):
-    parameters = (
-        "fields={fields}&filter[run_number][EQ]={run_number}&sort=-run_number"
-    ).format(fields=runs_fields_string, run_number=run_number)
+    parameters = ("filter[run_number][EQ]={run_number}&sort=-run_number").format(
+        run_number=run_number
+    )
 
     url = "{base}{table}?{parameters}".format(
         base=OMS_API_URL, table="runs", parameters=parameters
@@ -91,19 +91,12 @@ def get_run(run_number):
 
 def _get_runs(begin, end, cookies, page=0):
     parameters = (
-        "fields={fields}"
-        "&page[offset]={page}&page[limit]={page_size}&"
+        "page[offset]={page}&page[limit]={page_size}&"
         "&filter[run_number][GE]={begin}"
         "&filter[run_number][LE]={end}"
         "&filter[sequence][EQ]=GLOBAL-RUN"
         "&sort=run_number"
-    ).format(
-        begin=begin,
-        end=end,
-        fields=runs_fields_string,
-        page=page * PAGE_SIZE,
-        page_size=PAGE_SIZE,
-    )
+    ).format(begin=begin, end=end, page=page * PAGE_SIZE, page_size=PAGE_SIZE)
 
     url = "{base}{resource}?{parameters}".format(
         base=OMS_API_URL, resource="runs", parameters=parameters

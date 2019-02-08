@@ -19,6 +19,7 @@ def test_get_run():
     assert run["id"] == "327564"
     assert run["attributes"]["delivered_lumi"] == 8.117866
     assert run["attributes"]["recorded_lumi"] == 7.763654
+    assert run["attributes"]["l1_key"] == "l1_trg_collisionshi2018/v28"
 
 
 def test_get_runs():
