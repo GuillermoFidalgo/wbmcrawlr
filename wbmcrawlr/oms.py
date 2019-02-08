@@ -75,7 +75,7 @@ def _get_resources(table, parameters, cookies, page=0):
 
 
 def get_resources(table, parameters):
-    cookies = get_sso_cookies("https://cmsoms.cern.ch")
+    cookies = get_sso_cookies(OMS_API_URL)
 
     response = _get_resources(table, parameters, cookies)
     resource_count = response["meta"]["totalResourceCount"]
