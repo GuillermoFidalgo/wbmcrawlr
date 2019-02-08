@@ -10,7 +10,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from wbmcrawlr.utils import flatten_json_response, progress_bar
+from wbmcrawlr.utils import flatten_resource, progress_bar
 
 
 def test_flatten():
@@ -78,7 +78,7 @@ def test_flatten():
         },
     }
 
-    flat_run = flatten_json_response(run)
+    flat_run = flatten_resource(run)
 
     assert flat_run == {
         "run_number": 123456,

@@ -35,7 +35,7 @@ def save_to_disk(path, content):
             file.write(content.decode("utf-8"))
 
 
-def flatten_json_response(response):
+def flatten_resource(response):
     response_flat = response["attributes"]
     for key, value in response["meta"]["row"].items():
         new_field_name = "{}_unit".format(key)

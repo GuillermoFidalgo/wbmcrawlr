@@ -27,7 +27,7 @@ import math
 import cernrequests
 from cernrequests import get_sso_cookies
 
-from wbmcrawlr.utils import flatten_json_response, print_progress
+from wbmcrawlr.utils import flatten_resource, print_progress
 
 OMS_API_URL = "https://cmsoms.cern.ch/agg/api/v1/"
 PAGE_SIZE = 100
@@ -85,15 +85,13 @@ def get_resources(table, parameters):
     print("Total number of {}: {}".format(table, resource_count))
     print()
 
-    resources = []
-    for resource in response["data"]:
-        resources.append(flatten_json_response(resource))
+    resources = [flatten_resource(resource) for resource in response["data"]]
 
     for page in range(1, page_count + 1):
         print_progress(page, page_count, text="Page {}/{}".format(page, page_count))
         response = _get_resources(table, parameters, cookies, page)
-        for resource in response["data"]:
-            resources.append(flatten_json_response(resource))
+        resources.extend([flatten_resource(resource) for resource in response["data"]])
+
     print()
     print()
     return resources
