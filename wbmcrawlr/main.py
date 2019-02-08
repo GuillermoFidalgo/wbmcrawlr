@@ -31,8 +31,8 @@ def parse_arguments():
         formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=36),
     )
 
-    parser.add_argument("min", help="Minimum run number")
-    parser.add_argument("max", help="Maximum run number")
+    parser.add_argument("min", help="Minimum run/fill number")
+    parser.add_argument("max", help="Maximum run/fill number")
 
     resource_group = parser.add_mutually_exclusive_group(required=True)
     resource_group.add_argument("--runs", help="Retrieve Runs", action="store_true")

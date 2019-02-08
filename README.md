@@ -26,8 +26,8 @@ usage: wbmcrawl [-h] (--runs | --fills) min max
 CERN CMS WBM and OMS crawler.
 
 positional arguments:
-  min         Minimum run number
-  max         Maximum run number
+  min         Minimum run/fill number
+  max         Maximum run/fill number
 
 optional arguments:
   -h, --help  show this help message and exit
