@@ -16,10 +16,45 @@ from wbmcrawlr import oms
 def test_get_run():
     run = oms.get_run(327564)
 
+    runs_fields = [
+        "run_number",
+        "fill_number",
+        "stable_beam",
+        "fill_type_runtime",
+        "duration",
+        "start_time",
+        "end_time",
+        "delivered_lumi",
+        "recorded_lumi",
+        "init_lumi",
+        "end_lumi",
+        "b_field",
+        "energy",
+        "clock_type",
+        "sequence",
+        "l1_hlt_mode_stripped",
+        "cmssw_version",
+        "initial_prescale_index",
+        "tier0_transfer",
+        "l1_key_stripped",
+        "l1_menu",
+        "l1_triggers_counter",
+        "l1_rate",
+        "hlt_key",
+        "hlt_physics_size",
+        "hlt_physics_rate",
+        "hlt_physics_counter",
+        "hlt_physics_throughput",
+        "components",
+    ]
+
     assert run["id"] == "327564"
     assert run["attributes"]["delivered_lumi"] == 8.117866
     assert run["attributes"]["recorded_lumi"] == 7.763654
     assert run["attributes"]["l1_key"] == "l1_trg_collisionshi2018/v28"
+
+    for field in runs_fields:
+        assert field in run["attributes"]
 
 
 def test_get_runs():

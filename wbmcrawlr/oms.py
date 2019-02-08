@@ -32,44 +32,6 @@ from wbmcrawlr.utils import flatten_run, print_progress
 OMS_API_URL = "https://cmsoms.cern.ch/agg/api/v1/"
 PAGE_SIZE = 100
 
-runs_fields = [
-    "run_number",
-    "fill_number",
-    "stable_beam",
-    "fill_type_runtime",
-    "duration",
-    "start_time",
-    "end_time",
-    "delivered_lumi",
-    "recorded_lumi",
-    "init_lumi",
-    "end_lumi",
-    "b_field",
-    "energy",
-    "clock_type",
-    "sequence",
-    "l1_hlt_mode_stripped",
-    "cmssw_version",
-    "initial_prescale_index",
-    "tier0_transfer",
-    "l1_key_stripped",
-    "l1_menu",
-    "l1_triggers_counter",
-    "l1_rate",
-    "hlt_key",
-    "hlt_physics_size",
-    "hlt_physics_rate",
-    "hlt_physics_counter",
-    "hlt_physics_throughput",
-    "components",
-]
-
-runs_fields_string = ",".join(runs_fields)
-
-
-# delivered_lumi = Run Lumi
-# recorded_lumi = Run Live Lumi
-
 
 def get_run(run_number):
     parameters = ("filter[run_number][EQ]={run_number}&sort=-run_number").format(
