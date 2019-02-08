@@ -34,6 +34,10 @@ def parse_arguments():
     parser.add_argument("min", help="Minimum run number")
     parser.add_argument("max", help="Maximum run number")
 
+    resource_group = parser.add_mutually_exclusive_group(required=True)
+    resource_group.add_argument("--runs", help="Retrieve Runs", action="store_true")
+    resource_group.add_argument("--fills", help="Retrieve Fills", action="store_true")
+
     return parser.parse_args()
 
 
@@ -48,14 +52,17 @@ def crawl_run(run_number):
 
 def main():
     args = parse_arguments()
-    run_min = args.min
-    run_max = args.max
-    runs = oms.get_runs(run_min, run_max)
+    min = args.min
+    max = args.max
 
-    content = json.dumps(runs, indent=2)
-    filename = "oms_runs.json"
+    method = oms.get_runs if args.runs else oms.get_fills
+    response = method(min, max)
+
+    content = json.dumps(response, indent=2)
+
+    filename = "oms_runs.json" if args.runs else "oms_fills.json"
     save_to_disk(filename, content=content)
-    print("Stored {} runs in '{}'".format(len(runs), filename))
+    print("Stored {} runs in '{}'".format(len(response), filename))
 
 
 if __name__ == "__main__":

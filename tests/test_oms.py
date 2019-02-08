@@ -31,3 +31,28 @@ def test_get_runs():
 def test_get_runs_big_range():
     runs = oms.get_runs(326741, 326942)
     assert len(runs) == 117
+
+
+def test_get_fill():
+    fill = oms.get_fill(7492)
+    assert fill["id"] == "7492"
+    assert fill["attributes"]["fill_number"] == 7492
+    assert fill["attributes"]["fill_type_runtime"] == "PB"
+    assert fill["attributes"]["energy"] == 6369
+    assert fill["attributes"]["delivered_lumi"] == 8.107441
+    assert fill["attributes"]["recorded_lumi"] == 7.753413
+    assert fill["attributes"]["crossing_angle"] == 160
+
+
+def test_get_fills():
+    fills = oms.get_fills(7480, 7483)
+    assert len(fills) == 4
+    assert fills[0]["fill_number"] == 7480
+    assert fills[1]["fill_number"] == 7481
+    assert fills[2]["fill_number"] == 7482
+    assert fills[3]["fill_number"] == 7483
+
+
+def test_get_fills_big_range():
+    fills = oms.get_fills(7000, 7495)
+    assert len(fills) == 158

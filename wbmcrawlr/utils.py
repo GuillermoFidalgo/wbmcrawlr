@@ -32,7 +32,7 @@ def save_to_disk(path, content):
         try:
             file.write(content)
         except TypeError:
-            file.write(content.decode('utf-8'))
+            file.write(content.decode("utf-8"))
 
 
 def flatten_run(run):

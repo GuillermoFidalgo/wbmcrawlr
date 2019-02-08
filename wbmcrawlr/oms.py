@@ -32,7 +32,7 @@ from wbmcrawlr.utils import flatten_run, print_progress
 OMS_API_URL = "https://cmsoms.cern.ch/agg/api/v1/"
 PAGE_SIZE = 100
 
-fields = [
+runs_fields = [
     "run_number",
     "fill_number",
     "stable_beam",
@@ -64,7 +64,7 @@ fields = [
     "components",
 ]
 
-fields_string = ",".join(fields)
+runs_fields_string = ",".join(runs_fields)
 
 
 # delivered_lumi = Run Lumi
@@ -73,8 +73,8 @@ fields_string = ",".join(fields)
 
 def get_run(run_number):
     parameters = (
-        "fields={fields}" "&filter[run_number][EQ]={run_number}" "&sort=-run_number"
-    ).format(fields=fields_string, run_number=run_number)
+        "fields={fields}&filter[run_number][EQ]={run_number}&sort=-run_number"
+    ).format(fields=runs_fields_string, run_number=run_number)
 
     url = "{base}{table}?{parameters}".format(
         base=OMS_API_URL, table="runs", parameters=parameters
@@ -100,7 +100,7 @@ def _get_runs(begin, end, cookies, page=0):
     ).format(
         begin=begin,
         end=end,
-        fields=fields_string,
+        fields=runs_fields_string,
         page=page * PAGE_SIZE,
         page_size=PAGE_SIZE,
     )
@@ -135,3 +135,62 @@ def get_runs(begin, end):
     print()
     print()
     return runs
+
+
+def get_fill(fill_number):
+    parameters = "filter[fill_number][EQ]={fill_number}&sort=-fill_number".format(
+        fill_number=fill_number
+    )
+
+    url = "{base}{table}?{parameters}".format(
+        base=OMS_API_URL, table="fills", parameters=parameters
+    )
+
+    cookies = get_sso_cookies(url)
+    response = cernrequests.get(url, cookies=cookies)
+
+    data = response.json()["data"]
+    assert len(data) == 1, "More than 1 fill were returned"
+
+    return data[0]
+
+
+def _get_fills(begin, end, cookies, page=0):
+    parameters = (
+        "page[offset]={page}&page[limit]={page_size}&"
+        "&filter[fill_number][GE]={begin}"
+        "&filter[fill_number][LE]={end}"
+        "&filter[start_stable_beam][NEQ]=null"
+        "&sort=fill_number"
+    ).format(begin=begin, end=end, page=page * PAGE_SIZE, page_size=PAGE_SIZE)
+
+    url = "{base}{resource}?{parameters}".format(
+        base=OMS_API_URL, resource="fills", parameters=parameters
+    )
+
+    response = cernrequests.get(url, cookies=cookies)
+    return response.json()
+
+
+def get_fills(begin, end):
+    print("Getting fills {} - {} from CMS OMS".format(begin, end))
+    cookies = get_sso_cookies("https://cmsoms.cern.ch")
+    response = _get_fills(begin, end, cookies)
+    fill_count = response["meta"]["totalResourceCount"]
+    page_count = math.ceil(fill_count / PAGE_SIZE)
+
+    print("Total number of fills: {}".format(fill_count))
+    print()
+
+    fills = []
+    for fill in response["data"]:
+        fills.append(flatten_run(fill))
+
+    for page in range(1, page_count + 1):
+        print_progress(page, page_count, text="Page {}/{}".format(page, page_count))
+        response = _get_fills(begin, end, cookies, page)
+        for fill in response["data"]:
+            fills.append(flatten_run(fill))
+    print()
+    print()
+    return fills

@@ -35,10 +35,12 @@ optional arguments:
 
 ### Example
 
+#### Runs
+
 To download all runs from the CMS OMS in the run number range of 313052 to 327564 do:
 
 ```bash
-wbmcrawl 313052 327564
+wbmcrawl --runs 313052 327564
 ```
 
 ```
@@ -57,6 +59,23 @@ Total number of runs: 6424
 [##################################################] 100.00% Page 65/65
 
 Stored 6424 runs in 'oms_runs.json'
+```
+
+#### Fills
+
+Similarly, with the parameter ````--fillls```` you get all LHC fills in the specified number range.
+
+```bash
+wbmcrawl 7480 7483 --fills
+```
+
+```
+Getting fills 7480 - 7483 from CMS OMS
+Total number of fills: 4
+
+[##################################################] 100.00% Page 1/1
+
+Stored 4 runs in 'oms_fills.json'
 ```
 
 ## References
