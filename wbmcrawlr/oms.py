@@ -14,11 +14,14 @@
 Retrieve runs from the CMS Online Monitoring System
 https://cmsoms.cern.ch/cms/runs/report
 """
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
 from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
+
 from builtins import range
+from urllib.parse import urlencode
+
 from future import standard_library
 
 standard_library.install_aliases()
@@ -34,6 +37,7 @@ PAGE_SIZE = 100
 
 
 def get_resource(table, parameters):
+    parameters = urlencode(parameters)
     url = "{base}{table}?{parameters}".format(
         base=OMS_API_URL, table=table, parameters=parameters
     )
@@ -48,23 +52,18 @@ def get_resource(table, parameters):
 
 
 def get_run(run_number):
-    parameters = "filter[run_number][EQ]={run_number}&sort=-run_number".format(
-        run_number=run_number
-    )
-
+    parameters = {"filter[run_number][EQ]": run_number, "sort": "-run_number"}
     return get_resource("runs", parameters)
 
 
 def get_fill(fill_number):
-    parameters = "filter[fill_number][EQ]={fill_number}&sort=-fill_number".format(
-        fill_number=fill_number
-    )
+    parameters = {"filter[fill_number][EQ]": fill_number, "sort": "-fill_number"}
     return get_resource("fills", parameters)
 
 
 def _get_resources(table, parameters, cookies, page=0):
-    parameters = "page[offset]={page}&page[limit]={page_size}&{parameters}".format(
-        page=page * PAGE_SIZE, page_size=PAGE_SIZE, parameters=parameters
+    parameters = urlencode(
+        {"page[offset]": page * PAGE_SIZE, "page[limit]": PAGE_SIZE, **parameters}
     )
 
     url = "{base}{table}?{parameters}".format(
@@ -99,21 +98,23 @@ def get_resources(table, parameters):
 
 def get_runs(begin, end):
     print("Getting runs {} - {} from CMS OMS".format(begin, end))
-    parameters = (
-        "filter[run_number][GE]={begin}"
-        "&filter[run_number][LE]={end}"
-        "&filter[sequence][EQ]=GLOBAL-RUN"
-        "&sort=run_number"
-    ).format(begin=begin, end=end)
+    parameters = {
+        "filter[run_number][GE]": begin,
+        "filter[run_number][LE]": end,
+        "filter[sequence][EQ]": "GLOBAL-RUN",
+        "sort": "run_number",
+    }
+
     return get_resources("runs", parameters)
 
 
 def get_fills(begin, end):
     print("Getting fills {} - {} from CMS OMS".format(begin, end))
-    parameters = (
-        "filter[fill_number][GE]={begin}"
-        "&filter[fill_number][LE]={end}"
-        "&filter[start_stable_beam][NEQ]=null"
-        "&sort=fill_number"
-    ).format(begin=begin, end=end)
+    parameters = {
+        "filter[fill_number][GE]": begin,
+        "filter[fill_number][LE]": end,
+        "filter[start_stable_beam][NEQ]": "null",
+        "sort": "fill_number",
+    }
+
     return get_resources("fills", parameters)
