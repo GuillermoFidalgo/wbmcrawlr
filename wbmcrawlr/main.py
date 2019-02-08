@@ -10,19 +10,19 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-from __future__ import division
-from __future__ import absolute_import
+
 from future import standard_library
 
 standard_library.install_aliases()
 import argparse
 import json
-import os
 
 from wbmcrawlr import oms
-from wbmcrawlr.utils import save_to_disk, flatten_run
+from wbmcrawlr.utils import save_to_disk
 
 
 def parse_arguments():
@@ -39,15 +39,6 @@ def parse_arguments():
     resource_group.add_argument("--fills", help="Retrieve Fills", action="store_true")
 
     return parser.parse_args()
-
-
-def crawl_run(run_number):
-    run = oms.get_run(run_number)
-    file_name = "{}_{}.json".format("oms", run_number)
-    path = os.path.join("oms", file_name)
-    content = json.dumps(run, indent=2)
-    save_to_disk(path, content=content)
-    return flatten_run(run)
 
 
 def main():
