@@ -2,7 +2,7 @@
 
 # CMS WBM Crawler
 
-Retrieve data from the [CMS Online Monitoring System](https://cmsoms.cern.ch/) and [CMS Web Based Monitoring](https://cmswbm.cern.ch/). Currently only the [OMS Run Summary](https://cmsoms.cern.ch/cms/runs/summary) is tool assisted.
+Retrieve data from the [CMS Online Monitoring System](https://cmsoms.cern.ch/) and [CMS Web Based Monitoring](https://cmswbm.cern.ch/). Currently only the [OMS Run Summary](https://cmsoms.cern.ch/cms/runs/summary) and the [OMS LHC Fill Summary](https://cmsoms.cern.ch/cms/fills/summary) is tool assisted.
 
 ## Installation
 
@@ -63,7 +63,7 @@ Stored 6424 runs in 'oms_runs.json'
 
 #### Fills
 
-Similarly, with the parameter ````--fillls```` you get all LHC fills in the specified number range.
+Similarly, with the parameter ````--fills```` you get all LHC fills in the specified number range.
 
 ```bash
 wbmcrawl 7480 7483 --fills
