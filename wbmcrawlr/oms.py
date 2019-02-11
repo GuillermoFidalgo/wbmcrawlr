@@ -28,11 +28,11 @@ standard_library.install_aliases()
 import math
 
 import cernrequests
-from cernrequests import get_sso_cookies
 
 from wbmcrawlr.utils import flatten_resource, print_progress
 
-OMS_API_URL = "https://cmsoms.cern.ch/agg/api/v1/"
+OMS_API_URL = "http://cmsomsapi.cern.ch:8080/api/v1/"
+OMS_ALTERNATIVE_API_URL = "https://cmsoms.cern.ch/agg/api/v1/"  # requires cookies
 PAGE_SIZE = 100
 
 
@@ -42,8 +42,7 @@ def get_resource(table, parameters):
         base=OMS_API_URL, table=table, parameters=parameters
     )
 
-    cookies = get_sso_cookies(url)
-    response = cernrequests.get(url, cookies=cookies)
+    response = cernrequests.get(url)
 
     data = response.json()["data"]
     assert len(data) == 1, "More than 1 {} were returned".format(table)
@@ -61,7 +60,7 @@ def get_fill(fill_number):
     return get_resource("fills", parameters)
 
 
-def _get_resources(table, parameters, cookies, page=0):
+def _get_resources(table, parameters, page=0):
     params = {"page[offset]": page * PAGE_SIZE, "page[limit]": PAGE_SIZE}
     params.update(parameters)
     encoded_parameters = urlencode(params)
@@ -70,14 +69,12 @@ def _get_resources(table, parameters, cookies, page=0):
         base=OMS_API_URL, table=table, parameters=encoded_parameters
     )
 
-    response = cernrequests.get(url, cookies=cookies)
+    response = cernrequests.get(url)
     return response.json()
 
 
 def get_resources(table, parameters):
-    cookies = get_sso_cookies(OMS_API_URL)
-
-    response = _get_resources(table, parameters, cookies)
+    response = _get_resources(table, parameters)
     resource_count = response["meta"]["totalResourceCount"]
     page_count = math.ceil(resource_count / PAGE_SIZE)
 
@@ -88,7 +85,7 @@ def get_resources(table, parameters):
 
     for page in range(1, page_count + 1):
         print_progress(page, page_count, text="Page {}/{}".format(page, page_count))
-        response = _get_resources(table, parameters, cookies, page)
+        response = _get_resources(table, parameters, page)
         resources.extend([flatten_resource(resource) for resource in response["data"]])
 
     print()
