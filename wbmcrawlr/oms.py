@@ -44,7 +44,7 @@ def _get_oms_resource_within_cern_gpn(relative_url):
 def _get_oms_resource_authenticated(relative_url, cookies=None):
     url = "{}{}".format(OMS_ALTERNATIVE_API_URL, relative_url)
     if cookies is None:
-        print("Retrieving SSO Cookie for {}...".format(url))
+        print("Getting SSO Cookie for {}...".format(url))
         cookies = cernrequests.get_sso_cookies(url)
     return cernrequests.get(url, cookies=cookies)
 
@@ -196,7 +196,7 @@ def get_all_hltpathrates(run_number, silent=False, **kwargs):
             text="Path {}/{}: {:80s}".format(i, path_info_count, path_name),
         )
         hltpathrates.extend(
-            get_hltpathrates(run_number, path_name, silent=False, **kwargs)
+            get_hltpathrates(run_number, path_name, silent=True, **kwargs)
         )
 
     return hltpathrates

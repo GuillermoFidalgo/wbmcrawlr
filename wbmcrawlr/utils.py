@@ -85,7 +85,7 @@ def check_oms_connectiviy():
 def get_oms_cookie(silent=False):
     url = OMS_ALTERNATIVE_API_URL
     if not silent:
-        print("Getting sso cookie for {}...".format(url))
+        print("Getting SSO Cookie for {}...".format(url))
     return cernrequests.get_sso_cookies(url)
 
 
