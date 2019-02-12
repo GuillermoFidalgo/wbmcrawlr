@@ -22,7 +22,7 @@ import argparse
 import json
 
 from wbmcrawlr import oms
-from wbmcrawlr.utils import save_to_disk, check_oms_connectiviy, get_oms_cookie
+from wbmcrawlr.utils import save_to_disk, check_oms_connectivity, get_oms_cookie
 
 
 def parse_arguments():
@@ -87,7 +87,7 @@ def main():
 
     kwargs = {}
 
-    if not check_oms_connectiviy():
+    if not check_oms_connectivity():
         kwargs["inside_cern_gpn"] = False
         kwargs["cookies"] = get_oms_cookie()
 

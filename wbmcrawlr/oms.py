@@ -31,7 +31,8 @@ standard_library.install_aliases()
 
 import cernrequests
 
-from wbmcrawlr.utils import flatten_resource, print_progress, calc_page_count
+from wbmcrawlr.utils import flatten_resource, print_progress, calc_page_count, \
+    check_oms_connectivity
 
 PAGE_SIZE = 1000
 
@@ -61,6 +62,8 @@ def get_oms_resource(table, parameters, cookies=None, inside_cern_gpn=True):
 
 
 def _get_single_resource(table, parameters, **kwargs):
+    if "inside_cern_gpn" not in kwargs:
+        kwargs['inside_cern_gpn'] = check_oms_connectivity()
     data = get_oms_resource(table, parameters, **kwargs)["data"]
     assert len(data) == 1, "More than 1 {} were returned".format(table)
     return data[0]
@@ -85,6 +88,9 @@ def _get_resources_page(table, parameters, page, page_size, **kwargs):
 
 
 def get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs):
+    if "inside_cern_gpn" not in kwargs:
+        kwargs['inside_cern_gpn'] = check_oms_connectivity()
+
     if not silent:
         print("Getting initial response...", end="\r")
 

@@ -12,7 +12,6 @@
 
 from wbmcrawlr import oms
 
-
 def test_get_run():
     run = oms.get_run(327564)
 

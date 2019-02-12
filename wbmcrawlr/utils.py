@@ -78,7 +78,7 @@ def check_connectivity(url):
         return False
 
 
-def check_oms_connectiviy():
+def check_oms_connectivity():
     return check_connectivity(OMS_API_URL)
 
 
