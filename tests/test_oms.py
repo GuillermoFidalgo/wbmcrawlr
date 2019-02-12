@@ -69,6 +69,11 @@ def test_get_runs_big_range():
     assert len(runs) == 117
 
 
+def test_get_non_existing_runs():
+    runs = oms.get_runs(12345678, 12345688)
+    assert len(runs) == 0
+
+
 def test_get_fill():
     fill = oms.get_fill(7492)
     assert fill["id"] == "7492"
@@ -92,3 +97,36 @@ def test_get_fills():
 def test_get_fills_big_range():
     fills = oms.get_fills(7000, 7495)
     assert len(fills) == 158
+
+
+class TestGetLumisections:
+    def test_get_lumisections_by_run_number(self):
+        lumis = oms.get_lumisections(319579)
+        assert len(lumis) == 3259
+        assert "lumisection_number" in lumis[0]
+
+    def test_get_lumisections_by_fill_number(self):
+        lumis = oms.get_lumisections(fill_number=6919)
+        assert len(lumis) == 3750
+        assert "lumisection_number" in lumis[0]
+
+    def test_get_lumisections_by_time_range(self):
+        lumis = oms.get_lumisections(
+            start_time="2016-12-04T11:23:52Z", end_time="2016-12-04T14:57:10Z"
+        )
+        assert len(lumis) == 549
+        assert "lumisection_number" in lumis[0]
+
+
+def test_get_hltpathinfos():
+    hltpathinfos = oms.get_hltpathinfos(319579)
+    assert len(hltpathinfos) == 665
+    path_names = [info["path_name"] for info in hltpathinfos]
+    assert "HLT_AK8PFJet400_TrimMass30_v12" in path_names
+
+
+def test_get_hltpathrates():
+    run_number = 319579
+    path_name = "HLT_TrkMu16_DoubleTrkMu6NoFiltersNoVtx_v12"
+    hltpathrates = oms.get_hltpathrates(run_number, path_name)
+    assert 3167 == len(hltpathrates)

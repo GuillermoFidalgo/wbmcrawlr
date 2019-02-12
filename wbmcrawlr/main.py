@@ -22,7 +22,7 @@ import argparse
 import json
 
 from wbmcrawlr import oms
-from wbmcrawlr.utils import save_to_disk
+from wbmcrawlr.utils import save_to_disk, check_oms_connectiviy, get_oms_cookie
 
 
 def parse_arguments():
@@ -31,30 +31,73 @@ def parse_arguments():
         formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=36),
     )
 
-    parser.add_argument("min", help="Minimum run/fill number")
-    parser.add_argument("max", help="Maximum run/fill number")
-
     resource_group = parser.add_mutually_exclusive_group(required=True)
-    resource_group.add_argument("--runs", help="Retrieve Runs", action="store_true")
-    resource_group.add_argument("--fills", help="Retrieve Fills", action="store_true")
+    resource_group.add_argument(
+        "--runs", metavar=("min", "max"), nargs=2, type=int, help="Retrieve Runs"
+    )
+    resource_group.add_argument(
+        "--fills", metavar=("min", "max"), nargs=2, type=int, help="Retrieve Fills"
+    )
+    resource_group.add_argument(
+        "--lumisections", metavar="run", nargs=1, type=int, help="Retrieve Lumisections"
+    )
+    resource_group.add_argument(
+        "--hltrates",
+        metavar=("run", "path_name"),
+        nargs=2,
+        help="Hlt rates for given path per lumisection",
+    )
+    resource_group.add_argument(
+        "--all-hltrates",
+        metavar="run",
+        nargs=1,
+        type=int,
+        help="Hlt rates for all available paths per lumisection",
+    )
 
     return parser.parse_args()
 
 
 def main():
-    args = parse_arguments()
-    min = args.min
-    max = args.max
 
-    method = oms.get_runs if args.runs else oms.get_fills
-    resource = "runs" if args.runs else "fills"
-    response = method(min, max)
+    args = parse_arguments()
+
+    if args.runs:
+        resource_name = "runs"
+        method = oms.get_runs
+        arguments = args.runs
+    elif args.fills:
+        resource_name = "fills"
+        method = oms.get_fills
+        arguments = args.fills
+    elif args.lumisections:
+        resource_name = "lumisections"
+        method = oms.get_lumisections
+        arguments = args.lumisections
+    elif args.hltrates:
+        resource_name = "hltrates"
+        method = oms.get_hltpathrates
+        arguments = args.hltrates
+    elif args.all_hltrates:
+        resource_name = "hltrates"
+        method = oms.get_all_hltpathrates
+        arguments = args.all_hltrates
+    else:
+        raise NotImplementedError
+
+    kwargs = {}
+
+    if not check_oms_connectiviy():
+        kwargs["inside_cern_gpn"] = False
+        kwargs["cookies"] = get_oms_cookie()
+
+    response = method(*arguments, **kwargs)
 
     content = json.dumps(response, indent=2)
 
-    filename = "oms_{}.json".format(resource)
+    filename = "oms_{}.json".format(resource_name)
     save_to_disk(filename, content=content)
-    print("Stored {} {} in '{}'".format(len(response), resource, filename))
+    print("Stored {} {} in '{}'".format(len(response), resource_name, filename))
 
 
 if __name__ == "__main__":

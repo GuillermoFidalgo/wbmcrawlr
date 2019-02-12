@@ -16,12 +16,12 @@ from __future__ import division
 from __future__ import absolute_import
 from future import standard_library
 
+from wbmcrawlr.urls import WBM_URL
+
 standard_library.install_aliases()
 import cernrequests
 import xmltodict
 from cernrequests import get_sso_cookies
-
-BASE_URL = "https://cmswbm.cern.ch/cmsdb/servlet/"
 
 
 def _get_resource(servlet, parameters, cookies=None):
@@ -30,7 +30,7 @@ def _get_resource(servlet, parameters, cookies=None):
 
     params = "&".join(["{}={}".format(key, value) for key, value in parameters.items()])
     url = "{base}{servlet}?{params}".format(
-        base=BASE_URL, servlet=servlet, params=params
+        base=WBM_URL, servlet=servlet, params=params
     )
 
     if not cookies:

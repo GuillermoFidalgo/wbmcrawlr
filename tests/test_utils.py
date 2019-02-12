@@ -10,7 +10,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from wbmcrawlr.utils import flatten_resource, progress_bar
+from wbmcrawlr.utils import flatten_resource, progress_bar, calc_page_count
 
 
 def test_flatten():
@@ -161,3 +161,12 @@ def test_progress_bar():
         "[##################################################] 100.00% "
         == progress_bar(5, 5)
     )
+
+
+def test_calc_page_count():
+    assert 0 == calc_page_count(0, 100)
+    assert 1 == calc_page_count(1, 100)
+    assert 1 == calc_page_count(17, 100)
+    assert 1 == calc_page_count(99, 100)
+    assert 1 == calc_page_count(100, 100)
+    assert 2 == calc_page_count(101, 100)

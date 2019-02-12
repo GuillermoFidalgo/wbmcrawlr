@@ -12,7 +12,7 @@ pip install git+https://github.com/ptrstn/wbmcrawlr
 
 ## Prerequisites
 
-Setup your CERN Grid User Certificate as instructed in the cernrequests package:
+If you are not within the CERN GPN, setup your CERN Grid User Certificate as instructed in the cernrequests package:
 
 - https://github.com/ptrstn/cernrequests#prerequisites
 
@@ -21,18 +21,18 @@ Setup your CERN Grid User Certificate as instructed in the cernrequests package:
 ### Help
 
 ```bash
-usage: wbmcrawl [-h] (--runs | --fills) min max
+usage: wbmcrawl [-h]
+                (--runs min max | --fills min max | --lumisections run | --hltrates run path_name | --all-hltrates run)
 
 CERN CMS WBM and OMS crawler.
 
-positional arguments:
-  min         Minimum run/fill number
-  max         Maximum run/fill number
-
 optional arguments:
-  -h, --help  show this help message and exit
-  --runs      Retrieve Runs
-  --fills     Retrieve Fills
+  -h, --help                show this help message and exit
+  --runs min max            Retrieve Runs
+  --fills min max           Retrieve Fills
+  --lumisections run        Retrieve Lumisections
+  --hltrates run path_name  Hlt rates for given path per lumisection
+  --all-hltrates run        Hlt rates for all available paths per lumisection
 ```
 
 ### Example
@@ -73,12 +73,32 @@ wbmcrawl --fills 7480 7483
 
 ```
 Getting fills 7480 - 7483 from CMS OMS
-Total number of fills: 4
+Total number of fills: 4...
 
 [##################################################] 100.00% Page 1/1
 
 Stored 4 fills in 'oms_fills.json'
 ```
+
+#### Lumisections
+
+```bash
+wbmcrawl --lumisections 319579
+```
+
+#### HLT Rates
+
+```bash
+wbmcrawl --hltrates 319579 HLT_AK8PFJet400_TrimMass30_v12
+```
+
+If you want all hlt rates for all possible path names you can do :
+
+# TODO
+
+try to acces oms api outside of cern
+if inside of cern try to get without cookies
+if outside do with cookies
 
 ## References
 
