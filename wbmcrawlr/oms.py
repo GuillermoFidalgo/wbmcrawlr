@@ -137,7 +137,6 @@ def get_fills(begin, end, **kwargs):
     parameters = {
         "filter[fill_number][GE]": begin,
         "filter[fill_number][LE]": end,
-        "filter[start_stable_beam][NEQ]": "null",
         "sort": "fill_number",
     }
 

@@ -84,6 +84,12 @@ def test_get_fill():
     assert fill["attributes"]["crossing_angle"] == 160
 
 
+def test_get_fill_2():
+    fill = oms.get_fill(6477)
+    assert fill["id"] == "6477"
+    assert fill["attributes"]["fill_number"] == 6477
+
+
 def test_get_fills():
     fills = oms.get_fills(7480, 7483)
     assert len(fills) == 4
@@ -93,9 +99,14 @@ def test_get_fills():
     assert fills[3]["fill_number"] == 7483
 
 
+def test_get_fills_2():
+    fills = oms.get_fills(6477, 6477)
+    assert len(fills) == 1
+
+
 def test_get_fills_big_range():
     fills = oms.get_fills(7000, 7495)
-    assert len(fills) == 158
+    assert len(fills) == 496
 
 
 class TestGetLumisections:
