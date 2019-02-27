@@ -143,6 +143,26 @@ def get_fills(begin, end, **kwargs):
     return get_resources("fills", parameters, page_size=100, **kwargs)
 
 
+def get_lumisection_count(run_number, **kwargs):
+    """
+    :return: Number of lumisections where CMS was active
+    """
+    parameters = {
+        "filter[run_number][EQ]": run_number,
+        "filter[cms_active][EQ]": 'true',
+        "sort": "lumisection_number"
+    }
+
+    if "inside_cern_gpn" not in kwargs:
+        kwargs['inside_cern_gpn'] = check_oms_connectivity()
+
+    response = _get_resources_page(
+        "lumisections", parameters, page_size=1, page=1, **kwargs
+    )
+    resource_count = response["meta"]["totalResourceCount"]
+    return resource_count
+
+
 def get_lumisections(
     run_number=None, fill_number=None, start_time=None, end_time=None, **kwargs
 ):

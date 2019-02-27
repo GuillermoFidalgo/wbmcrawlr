@@ -11,6 +11,8 @@
 # or submit itself to any jurisdiction.
 
 from wbmcrawlr import oms
+from wbmcrawlr.oms import get_lumisection_count
+
 
 def test_get_run():
     run = oms.get_run(327564)
@@ -140,3 +142,7 @@ def test_get_hltpathrates():
     path_name = "HLT_TrkMu16_DoubleTrkMu6NoFiltersNoVtx_v12"
     hltpathrates = oms.get_hltpathrates(run_number, path_name)
     assert 3167 == len(hltpathrates)
+
+
+def test_get_lumisection_count():
+    assert 37 == get_lumisection_count(327267)
