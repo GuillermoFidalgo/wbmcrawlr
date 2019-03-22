@@ -73,7 +73,7 @@ wbmcrawl --fills 7480 7483
 
 ```
 Getting fills 7480 - 7483 from CMS OMS
-Total number of fills: 4...
+Total number of fills: 4
 
 [##################################################] 100.00% Page 1/1
 

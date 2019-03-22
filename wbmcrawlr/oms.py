@@ -101,6 +101,7 @@ def get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs
     page_count = calc_page_count(resource_count, page_size)
 
     if not silent:
+        print(" " * 100, end="\r")
         print("Total number of {}: {}".format(table, resource_count))
         print()
 
@@ -121,6 +122,10 @@ def get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs
 
 
 def get_runs(begin, end, **kwargs):
+    """"
+    >>> get_runs(317512, 317512)
+
+    """
     print("Getting runs {} - {} from CMS OMS".format(begin, end))
     parameters = {
         "filter[run_number][GE]": begin,
