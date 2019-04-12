@@ -12,6 +12,7 @@
 
 from wbmcrawlr import oms
 from wbmcrawlr.oms import get_lumisection_count
+import pytest
 
 
 def test_get_run():
@@ -129,7 +130,7 @@ class TestGetLumisections:
         assert len(lumis) == 549
         assert "lumisection_number" in lumis[0]
 
-
+@pytest.mark.skip(reason="Takes a very long time")
 def test_get_hltpathinfos():
     hltpathinfos = oms.get_hltpathinfos(319579)
     assert len(hltpathinfos) == 665
@@ -146,3 +147,20 @@ def test_get_hltpathrates():
 
 def test_get_lumisection_count():
     assert 37 == get_lumisection_count(327267)
+
+
+def test_get_fills_split_filling_scheme():
+    fills = oms.get_fills(7480, 7483, split_filling_scheme=True)
+    assert len(fills) == 4
+    assert fills[0]["fill_number"] == 7480
+    assert fills[1]["fill_number"] == 7481
+    assert fills[2]["fill_number"] == 7482
+    assert fills[3]["fill_number"] == 7483
+
+    fill = fills[0]
+
+    assert "injection_scheme" in fill
+    assert "injection_scheme_spacing" in fill
+
+    assert fill["injection_scheme"] == '75_150ns_733Pb_733_702_468_42bpi_20inj'
+    assert fill["injection_scheme_spacing"] == '75'

@@ -31,6 +31,12 @@ def parse_arguments():
         formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=36),
     )
 
+    parser.add_argument(
+        "--split-filling-scheme",
+        help="Splits the filling scheme string into multiple fields",
+        action="store_true",
+    )
+
     resource_group = parser.add_mutually_exclusive_group(required=True)
     resource_group.add_argument(
         "--runs", metavar=("min", "max"), nargs=2, type=int, help="Retrieve Runs"
@@ -91,7 +97,12 @@ def main():
         kwargs["inside_cern_gpn"] = False
         kwargs["cookies"] = get_oms_cookie()
 
-    response = method(*arguments, **kwargs)
+    extra_arguments = {}
+
+    if args.split_filling_scheme and args.fills:
+        extra_arguments['split_filling_scheme'] = True
+
+    response = method(*arguments, **kwargs, **extra_arguments)
 
     content = json.dumps(response, indent=2)
 

@@ -10,7 +10,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-from wbmcrawlr.utils import flatten_resource, progress_bar, calc_page_count
+from wbmcrawlr.utils import flatten_resource, progress_bar, calc_page_count, split_filling_scheme
 
 
 def test_flatten():
@@ -170,3 +170,58 @@ def test_calc_page_count():
     assert 1 == calc_page_count(99, 100)
     assert 1 == calc_page_count(100, 100)
     assert 2 == calc_page_count(101, 100)
+
+def test_split_filling_scheme():
+    data = {
+     'era': 'HIRun2018A',
+     'bunches_target': 733,
+     'injection_scheme': '75_150ns_733Pb_733_702_468_42bpi_20inj',
+     'delivered_lumi': 71.478508}
+
+    split_filling_scheme(data)
+
+    # Assert new fields
+
+    assert data["injection_scheme_spacing"] == '75'
+    assert data["injection_scheme_bunches"] == '150ns'
+    assert data["injection_scheme_ip1_5"] == '733Pb'
+    assert data["injection_scheme_ip2"] == '733'
+    assert data["injection_scheme_ip8"] == '702'
+    assert data["injection_scheme_trainlength"] == '468'
+    assert data["injection_scheme_injections"] == '42bpi'
+    assert data["injection_scheme_special_info"] == '20inj'
+
+    assert data['injection_scheme'] == '75_150ns_733Pb_733_702_468_42bpi_20inj'
+
+    # Assert no change in old data
+    assert data['era'] == 'HIRun2018A'
+    assert data['bunches_target'] == 733
+    assert data['injection_scheme'] == '75_150ns_733Pb_733_702_468_42bpi_20inj'
+
+
+def test_split_filling_scheme_2():
+        data = {
+            'era': 'HIRun2018A',
+            'bunches_target': 733,
+            'injection_scheme': '100_150ns_648Pb_620_619_52_36bpi_20inj_V2',
+            'delivered_lumi': 71.478508}
+
+        split_filling_scheme(data)
+
+        # Assert new fields
+
+        assert data["injection_scheme_spacing"] == '100'
+        assert data["injection_scheme_bunches"] == '150ns'
+        assert data["injection_scheme_ip1_5"] == '648Pb'
+        assert data["injection_scheme_ip2"] == '620'
+        assert data["injection_scheme_ip8"] == '619'
+        assert data["injection_scheme_trainlength"] == '52'
+        assert data["injection_scheme_injections"] == '36bpi'
+        assert data["injection_scheme_special_info"] == '20inj'
+
+        # Assert no change in old data
+        assert data['era'] == 'HIRun2018A'
+        assert data['bunches_target'] == 733
+        assert data['injection_scheme'] == '100_150ns_648Pb_620_619_52_36bpi_20inj_V2'
+
+

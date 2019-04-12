@@ -91,3 +91,49 @@ def get_oms_cookie(silent=False):
 
 def calc_page_count(resource_count, page_size):
     return math.ceil(resource_count / page_size)
+
+def split_filling_scheme(dictionary):
+    """
+    See https://lpc.web.cern.ch/cgi-bin/fillingSchemeTab.py
+
+    {spacing}_{bunches}_{IP1/5}_{IP2}_{IP8}_{trainlength}_{injections}_{special info}
+
+    with
+
+    spacing	:	bunch spacing
+    bunches	:	number of bunches per beam
+    IP1/5	:	number of collisions in IP1 and IP5
+    IP2	:	number of collisions in IP 2
+    IP8	:	number of collisions in IP 8
+    trainlength	:	the maximal length of a train
+    injections	:	number of injections per beam
+    special info	:	any other useful information
+    NC denotes the number of non-colliding bunches.
+
+    :param filling_scheme:
+    :return:
+    """
+    filling_scheme = dictionary['injection_scheme']
+
+    items = filling_scheme.split("_")
+
+    key_prefix = "injection_scheme_"
+    keys = [
+        'spacing',
+        'bunches',
+        'ip1_5',
+        'ip2',
+        'ip8',
+        'trainlength',
+        'injections',
+        'special_info'
+    ]
+    keys = ["{}{}".format(key_prefix, key) for key in keys]
+
+    values = filling_scheme.split("_")
+    # assert len(keys) == len(values), will fail for "100_150ns_648Pb_620_619_52_36bpi_20inj_V2"
+
+    for counter, key in enumerate(keys):
+        dictionary[key] = values[counter]
+
+    return dictionary

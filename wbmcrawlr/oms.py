@@ -32,7 +32,7 @@ standard_library.install_aliases()
 import cernrequests
 
 from wbmcrawlr.utils import flatten_resource, print_progress, calc_page_count, \
-    check_oms_connectivity
+    check_oms_connectivity, split_filling_scheme
 
 PAGE_SIZE = 1000
 
@@ -145,7 +145,15 @@ def get_fills(begin, end, **kwargs):
         "sort": "fill_number",
     }
 
-    return get_resources("fills", parameters, page_size=100, **kwargs)
+    split_scheme = kwargs.pop("split_filling_scheme", False)
+
+    if not split_scheme:
+        return get_resources("fills", parameters, page_size=100, **kwargs)
+    else:
+        fills = get_resources("fills", parameters, page_size=100, **kwargs)
+        for fill in fills:
+            split_filling_scheme(fill)
+        return fills
 
 
 def get_lumisection_count(run_number, **kwargs):
