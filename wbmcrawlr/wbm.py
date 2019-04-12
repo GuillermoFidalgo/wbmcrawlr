@@ -34,9 +34,9 @@ def _get_resource(servlet, parameters, cookies=None):
     )
 
     if not cookies:
-        cookies = get_sso_cookies(url)
+        cookies = get_sso_cookies(url, verify=False)
 
-    response = cernrequests.get(url, cookies=cookies)
+    response = cernrequests.get(url, cookies=cookies, verify=False)
     return xmltodict.parse(response.content)
 
 
