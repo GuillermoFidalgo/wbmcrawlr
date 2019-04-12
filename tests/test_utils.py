@@ -225,3 +225,29 @@ def test_split_filling_scheme_2():
         assert data['injection_scheme'] == '100_150ns_648Pb_620_619_52_36bpi_20inj_V2'
 
 
+
+def test_split_filling_scheme_2():
+        data = {
+            'era': 'HIRun2018A',
+            'bunches_target': 733,
+
+            'injection_scheme': "25ns_985b_973_872_908_96bpi_15inj",
+            'delivered_lumi': 71.478508}
+
+        split_filling_scheme(data)
+
+        assert data["injection_scheme_spacing"] == None
+        assert data["injection_scheme_bunches"] == '25ns'
+        assert data["injection_scheme_ip1_5"] == '985b'
+        assert data["injection_scheme_ip2"] == '973'
+        assert data["injection_scheme_ip8"] == '872'
+        assert data["injection_scheme_trainlength"] == '908'
+        assert data["injection_scheme_injections"] == '96bpi'
+        assert data["injection_scheme_special_info"] == '15inj'
+
+        # Assert no change in old data
+        assert data['era'] == 'HIRun2018A'
+        assert data['bunches_target'] == 733
+        assert data['injection_scheme'] == '25ns_985b_973_872_908_96bpi_15inj'
+
+

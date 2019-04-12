@@ -80,6 +80,21 @@ Total number of fills: 4
 Stored 4 fills in 'oms_fills.json'
 ```
 
+##### Split the filling scheme string
+
+```
+wbmcrawl --fills 6080 7083 --split-filling-scheme
+```
+
+```
+Getting fills 6080 - 7083 from CMS OMS
+Total number of fills: 1004                                                                         
+
+[##################################################] 100.00% Page 11/11
+
+Stored 1004 fills in 'oms_fills.json'
+```
+
 #### Lumisections
 
 ```bash
@@ -93,12 +108,6 @@ wbmcrawl --hltrates 319579 HLT_AK8PFJet400_TrimMass30_v12
 ```
 
 If you want all hlt rates for all possible path names you can do :
-
-# TODO
-
-try to acces oms api outside of cern
-if inside of cern try to get without cookies
-if outside do with cookies
 
 ## References
 

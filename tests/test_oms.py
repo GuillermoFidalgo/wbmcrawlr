@@ -164,3 +164,29 @@ def test_get_fills_split_filling_scheme():
 
     assert fill["injection_scheme"] == '75_150ns_733Pb_733_702_468_42bpi_20inj'
     assert fill["injection_scheme_spacing"] == '75'
+
+
+def test_get_fill_split_filling_scheme_none_type():
+    fill_number = 6000
+    fills = oms.get_fills(fill_number, fill_number, split_filling_scheme=True)
+    fill = fills[0]
+    assert len(fills) == 1
+    assert "injection_scheme" in fill
+    assert "injection_scheme_spacing" in fill
+
+def test_get_fill_split_filling_scheme_3():
+    fill_number = 6082
+    fills = oms.get_fills(fill_number, fill_number, split_filling_scheme=True)
+    fill = fills[0]
+    assert len(fills) == 1
+    assert "injection_scheme" in fill
+    assert fill["injection_scheme_spacing"] == None
+    assert fill["injection_scheme_bunches"] == "25ns"
+
+def test_get_fills_split_filling_scheme_big_range():
+    fills = oms.get_fills(6000, 7000, split_filling_scheme=True)
+    assert len(fills) > 4
+    fill = fills[0]
+
+    assert "injection_scheme" in fill
+    assert "injection_scheme_spacing" in fill

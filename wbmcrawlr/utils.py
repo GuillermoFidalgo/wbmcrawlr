@@ -96,6 +96,7 @@ def split_filling_scheme(dictionary):
     """
     See https://lpc.web.cern.ch/cgi-bin/fillingSchemeTab.py
 
+
     {spacing}_{bunches}_{IP1/5}_{IP2}_{IP8}_{trainlength}_{injections}_{special info}
 
     with
@@ -114,8 +115,14 @@ def split_filling_scheme(dictionary):
     :return:
     """
     filling_scheme = dictionary['injection_scheme']
+    if filling_scheme is None:
+        values = [None, None, None, None, None, None, None, None]
+    else:
+        values = filling_scheme.split("_")
+    # assert len(keys) == len(values), will fail for "100_150ns_648Pb_620_619_52_36bpi_20inj_V2"
 
-    items = filling_scheme.split("_")
+    if len(values) < 7 or len(values) > 8:
+        values = [None, None, None, None, None, None, None, None]
 
     key_prefix = "injection_scheme_"
     keys = [
@@ -128,12 +135,12 @@ def split_filling_scheme(dictionary):
         'injections',
         'special_info'
     ]
-    keys = ["{}{}".format(key_prefix, key) for key in keys]
 
-    values = filling_scheme.split("_")
-    # assert len(keys) == len(values), will fail for "100_150ns_648Pb_620_619_52_36bpi_20inj_V2"
+    if len(values) == 7:
+        values.insert(0, None)
+
+    keys = ["{}{}".format(key_prefix, key) for key in keys]
 
     for counter, key in enumerate(keys):
         dictionary[key] = values[counter]
-
     return dictionary
