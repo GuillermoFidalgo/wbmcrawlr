@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/ptrstn/wbmcrawlr.svg?branch=master)](https://travis-ci.com/ptrstn/wbmcrawlr)
+[![Build Status](https://travis-ci.com/CMSTrackerDPG/wbmcrawlr.svg?branch=master)](https://travis-ci.com/CMSTrackerDPG/wbmcrawlr)
 
 # CMS WBM Crawler
 
@@ -7,14 +7,14 @@ Retrieve data from the [CMS Online Monitoring System](https://cmsoms.cern.ch/) a
 ## Installation
 
 ```bash
-pip install git+https://github.com/ptrstn/wbmcrawlr
+pip install git+https://github.com/CMSTrackerDPG/wbmcrawlr
 ```
 
 ## Prerequisites
 
 If you are not within the CERN GPN, setup your CERN Grid User Certificate as instructed in the cernrequests package:
 
-- https://github.com/ptrstn/cernrequests#prerequisites
+- https://github.com/CMSTrackerDPG/cernrequests#prerequisites
 
 ## Usage
 
