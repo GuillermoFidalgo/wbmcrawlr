@@ -24,6 +24,7 @@ import json
 from wbmcrawlr import oms
 from wbmcrawlr.utils import save_to_disk, check_oms_connectivity, get_oms_cookie
 
+from omsapi import OMSAPI
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
@@ -91,12 +92,10 @@ def main():
     else:
         raise NotImplementedError
 
-    kwargs = {}
+    omsapi=OMSAPI()
+    omsapi.auth_cert()
 
-    if not check_oms_connectivity():
-        kwargs["inside_cern_gpn"] = False
-        kwargs["cookies"] = get_oms_cookie()
-
+    kwargs = {"omsapi": omsapi}
     extra_arguments = {}
 
     if args.split_filling_scheme and args.fills:

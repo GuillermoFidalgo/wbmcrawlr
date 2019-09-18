@@ -50,13 +50,13 @@ def test_get_run():
         "components",
     ]
 
-    assert run["id"] == "327564"
-    assert run["attributes"]["delivered_lumi"] == 8.117866
-    assert run["attributes"]["recorded_lumi"] == 7.763654
-    assert run["attributes"]["l1_key"] == "l1_trg_collisionshi2018/v28"
+    assert run["data"][0]["id"] == "327564"
+    assert run["data"][0]["attributes"]["delivered_lumi"] == 8.117866
+    assert run["data"][0]["attributes"]["recorded_lumi"] == 7.763654
+    assert run["data"][0]["attributes"]["l1_key"] == "l1_trg_collisionshi2018/v28"
 
     for field in runs_fields:
-        assert field in run["attributes"]
+        assert field in run["data"][0]["attributes"]
 
 
 def test_get_runs():
@@ -78,19 +78,19 @@ def test_get_non_existing_runs():
 
 def test_get_fill():
     fill = oms.get_fill(7492)
-    assert fill["id"] == "7492"
-    assert fill["attributes"]["fill_number"] == 7492
-    assert fill["attributes"]["fill_type_runtime"] == "PB"
-    assert fill["attributes"]["energy"] == 6369
-    assert fill["attributes"]["delivered_lumi"] == 8.107441
-    assert fill["attributes"]["recorded_lumi"] == 7.753413
-    assert fill["attributes"]["crossing_angle"] == 160
+    assert fill["data"][0]["id"] == "7492"
+    assert fill["data"][0]["attributes"]["fill_number"] == 7492
+    assert fill["data"][0]["attributes"]["fill_type_runtime"] == "IONS"
+    assert fill["data"][0]["attributes"]["energy"] == 6369
+    assert fill["data"][0]["attributes"]["delivered_lumi"] == 8.107441
+    assert fill["data"][0]["attributes"]["recorded_lumi"] == 7.753413
+    assert fill["data"][0]["attributes"]["crossing_angle"] == 160
 
 
 def test_get_fill_2():
     fill = oms.get_fill(6477)
-    assert fill["id"] == "6477"
-    assert fill["attributes"]["fill_number"] == 6477
+    assert fill["data"][0]["id"] == "6477"
+    assert fill["data"][0]["attributes"]["fill_number"] == 6477
 
 
 def test_get_fills():
@@ -120,7 +120,7 @@ class TestGetLumisections:
 
     def test_get_lumisections_by_fill_number(self):
         lumis = oms.get_lumisections(fill_number=6919)
-        assert len(lumis) == 3750
+        assert len(lumis) == 3754
         assert "lumisection_number" in lumis[0]
 
     def test_get_lumisections_by_time_range(self):
@@ -146,7 +146,7 @@ def test_get_hltpathrates():
 
 
 def test_get_lumisection_count():
-    assert 37 == get_lumisection_count(327267)
+    assert 45 == get_lumisection_count(327267)
 
 
 def test_get_fills_split_filling_scheme():

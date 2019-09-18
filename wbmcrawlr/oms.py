@@ -32,72 +32,56 @@ standard_library.install_aliases()
 import cernrequests
 
 from wbmcrawlr.utils import flatten_resource, print_progress, calc_page_count, \
-    check_oms_connectivity, split_filling_scheme
+    split_filling_scheme
+
+from omsapi import OMSAPI
 
 PAGE_SIZE = 1000
 
-
-def _get_oms_resource_within_cern_gpn(relative_url):
-    url = "{}{}".format(OMS_API_URL, relative_url)
-    return requests.get(url)
-
-
-def _get_oms_resource_authenticated(relative_url, cookies=None):
-    url = "{}{}".format(OMS_ALTERNATIVE_API_URL, relative_url)
-    if cookies is None:
-        print("Getting SSO Cookie for {}...".format(url))
-        cookies = cernrequests.get_sso_cookies(url)
-    return cernrequests.get(url, cookies=cookies)
-
-
-def get_oms_resource(table, parameters, cookies=None, inside_cern_gpn=True):
-    parameters = urlencode(parameters)
-    relative_url = "{table}?{parameters}".format(table=table, parameters=parameters)
-
-    if inside_cern_gpn:  # Within CERN GPN
-        response = _get_oms_resource_within_cern_gpn(relative_url)
-    else:  # Outside CERN GPN, requires authentication
-        response = _get_oms_resource_authenticated(relative_url, cookies)
-    return response.json()
-
-
-def _get_single_resource(table, parameters, **kwargs):
-    if "inside_cern_gpn" not in kwargs:
-        kwargs['inside_cern_gpn'] = check_oms_connectivity()
-    data = get_oms_resource(table, parameters, **kwargs)["data"]
-    assert len(data) == 1, "More than 1 {} were returned".format(table)
-    return data[0]
-
-
 def get_run(run_number, **kwargs):
-    parameters = {"filter[run_number][EQ]": run_number, "sort": "-run_number"}
-    return _get_single_resource("runs", parameters, **kwargs)
+    filters = [{
+        "attribute_name": "run_number",
+        "value": run_number,
+        "operator": "EQ"
+    }]
 
+    if "omsapi" in kwargs:
+        omsapi = kwargs["omsapi"]
+    else:
+        omsapi=OMSAPI()
+        omsapi.auth_cert()
+
+    runs_query = omsapi.query("runs")
+    runs_query.filters(filters)
+    runs_query.sort("run_number", asc=True).include("meta")
+
+    return runs_query.data().json()
 
 def get_fill(fill_number, **kwargs):
-    parameters = {"filter[fill_number][EQ]": fill_number, "sort": "-fill_number"}
-    return _get_single_resource("fills", parameters, **kwargs)
+    filters = [{
+        "attribute_name": "fill_number",
+        "value": fill_number,
+        "operator": "EQ"
+    }]
 
+    if "omsapi" in kwargs:
+        omsapi = kwargs["omsapi"]
+    else:
+        omsapi=OMSAPI()
+        omsapi.auth_cert()
 
-def _get_resources_page(table, parameters, page, page_size, **kwargs):
-    assert page >= 1, "Page number cant be lower than 1"
-    params = {"page[offset]": (page - 1) * page_size, "page[limit]": page_size}
-    params.update(parameters)
+    fills_query = omsapi.query("fills")
+    fills_query.filters(filters)
+    fills_query.sort("fill_number", asc=True).include("meta")
 
-    return get_oms_resource(table, params, **kwargs)
+    return fills_query.data().json()
 
-
-def get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs):
-    if "inside_cern_gpn" not in kwargs:
-        kwargs['inside_cern_gpn'] = check_oms_connectivity()
-
+def get_resources(query, table, page_size=PAGE_SIZE, silent=False, **kwargs):
     if not silent:
         print("Getting initial response...", end="\r")
 
-    response = _get_resources_page(
-        table, parameters, page=1, page_size=page_size, **kwargs
-    )
-    resource_count = response["meta"]["totalResourceCount"]
+    response = query.paginate(page=1, per_page=page_size).data()
+    resource_count = response.json()["meta"]["totalResourceCount"]
     page_count = calc_page_count(resource_count, page_size)
 
     if not silent:
@@ -105,13 +89,17 @@ def get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs
         print("Total number of {}: {}".format(table, resource_count))
         print()
 
-    resources = [flatten_resource(resource) for resource in response["data"]]
+    resources = [flatten_resource(resource) for resource in response.json()["data"]]
 
     for page in range(2, page_count + 1):
         if not silent:
             print_progress(page, page_count, text="Page {}/{}".format(page, page_count))
-        response = _get_resources_page(table, parameters, page, page_size, **kwargs)
-        resources.extend([flatten_resource(resource) for resource in response["data"]])
+        response = query.paginate(page=page, per_page=page_size).data()
+
+        if response is 200:
+            resources.extend([flatten_resource(resource) for resource in response.json()["data"]])
+        else:
+            print(response)
 
     if not silent:
         print()
@@ -127,30 +115,68 @@ def get_runs(begin, end, **kwargs):
 
     """
     print("Getting runs {} - {} from CMS OMS".format(begin, end))
-    parameters = {
-        "filter[run_number][GE]": begin,
-        "filter[run_number][LE]": end,
-        "filter[sequence][EQ]": "GLOBAL-RUN",
-        "sort": "run_number",
-    }
 
-    return get_resources("runs", parameters, page_size=100, **kwargs)
+    filters = [{
+        "attribute_name": "run_number",
+        "value": begin,
+        "operator": "GE"
+    },
+        {
+        "attribute_name": "run_number",
+        "value": end,
+        "operator": "LE"
+    },
+        {
+        "attribute_name": "sequence",
+        "value": "GLOBAL-RUN",
+        "operator": "EQ"
+    }]
+
+    if "omsapi" in kwargs:
+        omsapi = kwargs["omsapi"]
+    else:
+        omsapi=OMSAPI()
+        omsapi.auth_cert()
+
+    runs_query = omsapi.query("runs")
+    runs_query.filters(filters)
+    runs_query.sort("run_number", asc=True).include("meta")
+    runs_query.set_verbose(False)
+
+    return get_resources(runs_query, "runs", page_size=100, **kwargs)
 
 
 def get_fills(begin, end, **kwargs):
     print("Getting fills {} - {} from CMS OMS".format(begin, end))
-    parameters = {
-        "filter[fill_number][GE]": begin,
-        "filter[fill_number][LE]": end,
-        "sort": "fill_number",
-    }
+
+    filters = [{
+        "attribute_name": "fill_number",
+        "value": begin,
+        "operator": "GE"
+    },
+        {
+        "attribute_name": "fill_number",
+        "value": end,
+        "operator": "LE"
+    }]
+
+    if "omsapi" in kwargs:
+        omsapi = kwargs["omsapi"]
+    else:
+        omsapi=OMSAPI()
+        omsapi.auth_cert()
+
+    fills_query = omsapi.query("fills")
+    fills_query.filters(filters)
+    fills_query.sort("fill_number", asc=True).include("meta")
+    fills_query.set_verbose(False)
 
     split_scheme = kwargs.pop("split_filling_scheme", False)
 
     if not split_scheme:
-        return get_resources("fills", parameters, page_size=100, **kwargs)
+        return get_resources(fills_query, "fills", page_size=100, **kwargs)
     else:
-        fills = get_resources("fills", parameters, page_size=100, **kwargs)
+        fills = get_resources(fills_query, "fills", page_size=100, **kwargs)
         for fill in fills:
             split_filling_scheme(fill)
         return fills
@@ -160,19 +186,32 @@ def get_lumisection_count(run_number, **kwargs):
     """
     :return: Number of lumisections where CMS was active
     """
-    parameters = {
-        "filter[run_number][EQ]": run_number,
-        "filter[cms_active][EQ]": 'true',
-        "sort": "lumisection_number"
+    filters = [{
+        "attribute_name": "run_number",
+        "value": run_number,
+        "operator": "EQ"
+    }]
+    '''
+        {
+        "attribute_name": "cms_active",
+        "value": "true",
+        "operator": "EQ"
     }
+    '''
 
-    if "inside_cern_gpn" not in kwargs:
-        kwargs['inside_cern_gpn'] = check_oms_connectivity()
+    if "omsapi" in kwargs:
+        omsapi = kwargs["omsapi"]
+    else:
+        omsapi=OMSAPI()
+        omsapi.auth_cert()
 
-    response = _get_resources_page(
-        "lumisections", parameters, page_size=1, page=1, **kwargs
-    )
-    resource_count = response["meta"]["totalResourceCount"]
+    lumisections_query = omsapi.query("lumisections")
+    lumisections_query.filters(filters)
+    lumisections_query.sort("lumisection_number", asc=True).include("meta")
+    lumisections_query.set_verbose(False)
+
+    response = lumisections_query.data()
+    resource_count = response.json()["meta"]["totalResourceCount"]
     return resource_count
 
 
@@ -183,35 +222,96 @@ def get_lumisections(
         bool(run_number) ^ bool(fill_number) ^ bool(start_time and end_time)
     ), "Specify either run number or fill number or time range"
 
-    parameters = {}
+    filters=[]
     if run_number:
-        parameters["filter[run_number][EQ]"] = run_number
+        filters.append({
+                "attribute_name": "run_number",
+                "value": run_number,
+                "operator": "EQ"
+            })
     elif fill_number:
-        parameters["filter[fill_number][EQ]"] = fill_number
+        filters.append({
+                "attribute_name": "fill_number",
+                "value": fill_number,
+                "operator": "EQ"
+            })
     elif start_time and end_time:
-        parameters["filter[start_time][GE]"] = start_time
-        parameters["filter[end_time][LE]"] = end_time
-    parameters["sort"] = "lumisection_number"
+        filters.append({
+                "attribute_name": "start_time",
+                "value": start_time,
+                "operator": "GE"
+            })
+        filters.append({
+                "attribute_name": "end_time",
+                "value": end_time,
+                "operator": "LE"
+            })
 
-    return get_resources("lumisections", parameters, page_size=5000, **kwargs)
+    if "omsapi" in kwargs:
+        omsapi = kwargs["omsapi"]
+    else:
+        omsapi=OMSAPI()
+        omsapi.auth_cert()
+
+    lumisections_query = omsapi.query("lumisections")
+    lumisections_query.filters(filters)
+    lumisections_query.sort("lumisection_number", asc=True).include("meta")
+    lumisections_query.set_verbose(False)
+
+    return get_resources(lumisections_query, "lumisections", page_size=5000, **kwargs)
 
 
 def get_hltpathinfos(run_number, **kwargs):
-    parameters = {"filter[run_number][EQ]": run_number}
+    filters = [{
+        "attribute_name": "run_number",
+        "value": run_number,
+        "operator": "EQ"
+    }]
 
-    return get_resources("hltpathinfo", parameters, page_size=1000, **kwargs)
+    if "omsapi" in kwargs:
+        omsapi = kwargs["omsapi"]
+    else:
+        omsapi=OMSAPI()
+        omsapi.auth_cert()
+
+    hltpathinfo_query = omsapi.query("hltpathinfo")
+    hltpathinfo_query.filters(filters)
+    hltpathinfo_query.include("meta")
+    hltpathinfo_query.set_verbose(False)
+
+    return get_resources(hltpathinfo_query, "hltpathinfo", page_size=1000, **kwargs)
 
 
 def get_hltpathrates(run_number, path_name, **kwargs):
-    parameters = {
-        "filter[last_lumisection_number][GT]": 0,
-        "filter[path_name][EQ]": path_name,
-        "filter[run_number][EQ]": run_number,
-        "sort": "last_lumisection_number",
-        "group[granularity]": "lumisection",
-    }
-    return get_resources("hltpathrates", parameters, page_size=10000, **kwargs)
+    filters = [{
+        "attribute_name": "last_lumisection_number",
+        "value": 0,
+        "operator": "GT"
+    },
+        {
+        "attribute_name": "path_name",
+        "value": path_name,
+        "operator": "EQ"
+    },
+        {
+        "attribute_name": "run_number",
+        "value": run_number,
+        "operator": "EQ"
+    }]
 
+    if "omsapi" in kwargs:
+        omsapi = kwargs["omsapi"]
+    else:
+        omsapi=OMSAPI()
+        omsapi.auth_cert()
+
+    hltpathrates_query = omsapi.query("hltpathrates")
+    hltpathrates_query.filters(filters)
+    hltpathrates_query.custom("group[granularity]","lumisection")
+    hltpathrates_query.sort("last_lumisection_number", asc=True).include("meta")
+    hltpathrates_query.set_verbose(False)
+
+    return get_resources(hltpathrates_query, "hltpathrates", page_size=10000, **kwargs)
 
 def get_all_hltpathrates(run_number, silent=False, **kwargs):
     if not silent:
