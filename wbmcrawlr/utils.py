@@ -43,7 +43,7 @@ def save_to_disk(path, content):
 
 def flatten_resource(response):
     response_flat = response["attributes"]
-    if response["type"] in ["runs", "fills"]:
+    if response["type"] in ["runs", "fills"] and "meta" in response:
         for key, value in response["meta"]["row"].items():
             new_field_name = "{}_unit".format(key)
             response_flat.update({new_field_name: value["units"]})
@@ -74,7 +74,7 @@ def check_connectivity(url):
     try:
         requests.get(url, timeout=TIMEOUT_TIME)
         return True
-    except requests.exceptions.ConnectTimeout:
+    except (requests.exceptions.ConnectTimeout, requests.exceptions.SSLError) as e:
         return False
 
 

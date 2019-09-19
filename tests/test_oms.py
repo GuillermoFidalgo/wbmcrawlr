@@ -80,7 +80,7 @@ def test_get_fill():
     fill = oms.get_fill(7492)
     assert fill["id"] == "7492"
     assert fill["attributes"]["fill_number"] == 7492
-    assert fill["attributes"]["fill_type_runtime"] == "PB"
+    assert fill["attributes"]["fill_type_runtime"] == "IONS"
     assert fill["attributes"]["energy"] == 6369
     assert fill["attributes"]["delivered_lumi"] == 8.107441
     assert fill["attributes"]["recorded_lumi"] == 7.753413
@@ -120,7 +120,7 @@ class TestGetLumisections:
 
     def test_get_lumisections_by_fill_number(self):
         lumis = oms.get_lumisections(fill_number=6919)
-        assert len(lumis) == 3750
+        assert len(lumis) == 3754
         assert "lumisection_number" in lumis[0]
 
     def test_get_lumisections_by_time_range(self):
@@ -146,7 +146,9 @@ def test_get_hltpathrates():
 
 
 def test_get_lumisection_count():
-    assert 37 == get_lumisection_count(327267)
+    #assert 37 == get_lumisection_count(327267) # for when cms_active filter works
+    assert 45 == get_lumisection_count(327267) # cms_active filter cannot be added anymore
+
 
 
 def test_get_fills_split_filling_scheme():

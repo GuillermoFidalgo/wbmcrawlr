@@ -162,7 +162,7 @@ def get_lumisection_count(run_number, **kwargs):
     """
     parameters = {
         "filter[run_number][EQ]": run_number,
-        "filter[cms_active][EQ]": 'true',
+        #"filter[cms_active][EQ]": 'true', # removed due to changes in oms api not supporting this anymore
         "sort": "lumisection_number"
     }
 
