@@ -103,6 +103,8 @@ def main():
         extra_arguments['split_filling_scheme'] = True
 
     response = method(*arguments, **kwargs, **extra_arguments)
+    
+    print("Value of HTTP Response ", response)
 
     content = json.dumps(response, indent=2)
 
