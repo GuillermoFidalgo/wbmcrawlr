@@ -86,7 +86,7 @@ def get_oms_cookie(silent=False):
     url = OMS_ALTERNATIVE_API_URL
     if not silent:
         print("Getting SSO Cookie for {}...".format(url))
-    return cernrequests.get_sso_cookies(url)
+    return cernrequests.get_sso_cookies(url,verify=False)
 
 
 def calc_page_count(resource_count, page_size):
