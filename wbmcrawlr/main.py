@@ -102,7 +102,7 @@ def main():
     if args.split_filling_scheme and args.fills:
         extra_arguments['split_filling_scheme'] = True
 
-    response = method(*arguments, **kwargs, **extra_arguments)
+    response = method(*arguments, **extra_arguments,  **kwargs)
     
     print("Value of HTTP Response ", response)
 
