@@ -100,9 +100,9 @@ def main():
     extra_arguments = {}
 
     if args.split_filling_scheme and args.fills:
-        extra_arguments['split_filling_scheme'] = True
+        kwargs['split_filling_scheme'] = True
 
-    response = method(*arguments, **extra_arguments,  **kwargs)
+    response = method(*arguments, **kwargs)
     
     print("Value of HTTP Response ", response)
 
