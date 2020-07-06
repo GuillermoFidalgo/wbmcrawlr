@@ -47,6 +47,10 @@ def _get_oms_resource_authenticated(relative_url, cookies=None):
     if cookies is None:
         print("Getting SSO Cookie for {}...".format(url))
         cookies = cernrequests.get_sso_cookies(url, verify=False)
+        response = cernrequests.get(url, cookies=cookies, verify=False)
+        response = response.json()
+        content = json.dumps(response, indent = 2)
+        print(content)
     return cernrequests.get(url, cookies=cookies, verify=False)
 
 
