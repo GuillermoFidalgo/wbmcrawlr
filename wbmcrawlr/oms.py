@@ -27,7 +27,7 @@ from future import standard_library
 
 from wbmcrawlr.urls import OMS_API_URL, OMS_ALTERNATIVE_API_URL
 
-from wbmcrawlr.urls import CERT_TUPLE
+from wbmcrawlr.constants import CERT_TUPLE
 
 standard_library.install_aliases()
 
