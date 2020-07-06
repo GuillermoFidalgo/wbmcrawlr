@@ -104,8 +104,6 @@ def main():
 
     response = method(*arguments, **kwargs, **extra_arguments)
     
-    print("Value of HTTP Response ", response)
-
     content = json.dumps(response, indent=2)
 
     filename = "oms_{}.json".format(resource_name)
