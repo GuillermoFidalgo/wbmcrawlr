@@ -23,6 +23,8 @@ from future import standard_library
 from wbmcrawlr.constants import TIMEOUT_TIME
 from wbmcrawlr.urls import OMS_API_URL, OMS_ALTERNATIVE_API_URL
 
+from wbmcrawlr.constants import CERT_TUPLE
+
 standard_library.install_aliases()
 import math
 import os
@@ -85,8 +87,8 @@ def check_oms_connectivity():
 def get_oms_cookie(silent=False):
     url = OMS_ALTERNATIVE_API_URL
     if not silent:
-        print("Getting SSO Cookie for {}...".format(url))
-    return cernrequests.get_sso_cookies(url,verify=False)
+        print("Getting oms SSO Cookie for {}...".format(url))
+    return cernrequests.get_sso_cookies(url, CERT_TUPLE, verify=False)
 
 
 def calc_page_count(resource_count, page_size):
