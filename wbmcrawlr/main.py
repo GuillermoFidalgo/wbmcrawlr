@@ -104,6 +104,7 @@ def main():
 
     response = method(*arguments, **kwargs)
     
+
     #print("Value of HTTP Response ", response)
 
     content = json.dumps(response, indent=2)
