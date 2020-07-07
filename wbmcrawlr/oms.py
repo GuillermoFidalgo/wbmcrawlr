@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 from builtins import range
 from urllib.parse import urlencode
 
+import json
 import requests
 from future import standard_library
 
@@ -48,7 +49,9 @@ def _get_oms_resource_authenticated(relative_url, cookies=None):
     url = "{}{}".format(OMS_ALTERNATIVE_API_URL, relative_url)
     if cookies is None:
         print("Getting SSO Cookie for {}...".format(url))
+
         cookies = cernrequests.get_sso_cookies(url, CERT_TUPLE, verify=False)
+
     return cernrequests.get(url, cookies=cookies, verify=False)
 
 

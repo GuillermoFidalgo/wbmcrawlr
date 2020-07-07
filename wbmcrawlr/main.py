@@ -97,13 +97,16 @@ def main():
         kwargs["inside_cern_gpn"] = False
         kwargs["cookies"] = get_oms_cookie()
 
-    extra_arguments = {}
+    #extra_arguments = {}
 
     if args.split_filling_scheme and args.fills:
-        extra_arguments['split_filling_scheme'] = True
+        kwargs['split_filling_scheme'] = True
 
-    response = method(*arguments, **kwargs, **extra_arguments)
+    response = method(*arguments, **kwargs)
     
+
+    #print("Value of HTTP Response ", response)
+
     content = json.dumps(response, indent=2)
 
     filename = "oms_{}.json".format(resource_name)
