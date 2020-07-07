@@ -52,6 +52,7 @@ def _get_oms_resource_authenticated(relative_url, cookies=None):
         print("Looking for certificates in {}".format(CERT_TUPLE))
 
         cookies = cernrequests.get_sso_cookies(url, CERT_TUPLE, verify=False)
+        print("The cookies are {}".format(cookies))
 
     return cernrequests.get(url, cookies=cookies, verify=False)
 
@@ -64,6 +65,8 @@ def get_oms_resource(table, parameters, cookies=None, inside_cern_gpn=True):
         response = _get_oms_resource_within_cern_gpn(relative_url)
     else:  # Outside CERN GPN, requires authentication
         response = _get_oms_resource_authenticated(relative_url, cookies)
+        print("Inside get_oms_resource")
+        print("The response is {}".format(response.json()))
     return response.json()
 
 
@@ -89,6 +92,9 @@ def _get_resources_page(table, parameters, page, page_size, **kwargs):
     assert page >= 1, "Page number cant be lower than 1"
     params = {"page[offset]": (page - 1) * page_size, "page[limit]": page_size}
     params.update(parameters)
+    
+    oms_resource = get_oms_resource(table, params, **kwargs)
+    print("Inside get_resources_page")
 
     return get_oms_resource(table, params, **kwargs)
 
@@ -103,6 +109,8 @@ def get_resources(table, parameters, page_size=PAGE_SIZE, silent=False, **kwargs
     response = _get_resources_page(
         table, parameters, page=1, page_size=page_size, **kwargs
     )
+    print("Inside get_resources")
+    
     resource_count = response["meta"]["totalResourceCount"]
     page_count = calc_page_count(resource_count, page_size)
 
