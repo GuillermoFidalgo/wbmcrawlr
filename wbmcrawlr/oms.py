@@ -66,7 +66,8 @@ def get_oms_resource(table, parameters, cookies=None, inside_cern_gpn=True):
     else:  # Outside CERN GPN, requires authentication
         response = _get_oms_resource_authenticated(relative_url, cookies)
         print("Inside get_oms_resource")
-        print("The response is {}".format(response.json()))
+        print("The response is {}".format(response))
+        
     return response.json()
 
 
