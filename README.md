@@ -7,7 +7,7 @@ Retrieve data from the [CMS Online Monitoring System](https://cmsoms.cern.ch/) a
 ## Installation
 
 ```bash
-pip install git+https://github.com/CMSTrackerDPG/wbmcrawlr
+pip install git+https://github.com/GuillermoFidalgo/wbmcrawlr
 ```
 
 ## Prerequisites
